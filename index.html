@@ -3,22 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestore Rapporti Familiari</title>
+    <title>Fax Mandatore</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        input, textarea, button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 1em;
+        }
+        #messages {
+            margin-top: 20px;
+        }
+        .message {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Signor Gestore Rapporti Familiari & Fratelli</h1>
+    <h1>Fax Mandatore</h1>
+    <label for="name">Nome del destinatario:</label>
+    <input type="text" id="name">
     
-    <h2>Scelta Fratello</h2>
+    <label for="message">Messaggio:</label>
+    <textarea id="message"></textarea>
     
-    <form>
-        <label for="genere">Seleziona il genere:</label><br>
-        <select id="genere" name="genere">
-            <option value="maschio">Maschio</option>
-            <option value="femmina">Femmina</option>
-            <option value="altro">Altro</option>
-        </select><br><br>
-        
-        <button type="submit">Invio</button>
-    </form>
+    <button onclick="sendMessage()">Invia</button>
+    
+    <h2>Messaggi inviati:</h2>
+    <div id="messages"></div>
+
+    <script>
+        // Funzione per inviare il messaggio
+        function sendMessage() {
+            const name = document.getElementById('name').value;
+            const message = document.getElementById('message').value;
+
+            if (name && message) {
+                // Otteniamo i messaggi esistenti dal localStorage
+                let messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+                // Aggiungiamo il nuovo messaggio
+                messages.push({ name, message });
+
+                // Salviamo i messaggi aggiornati nel localStorage
+                localStorage.setItem('messages', JSON.stringify(messages));
+
+                // Ripuliamo i campi di input
+                document.getElementById('name').value = '';
+                document.getElementById('message').value = '';
+
+                // Ricarichiamo i messaggi
+                loadMessages();
+            } else {
+                alert('Per favore, compila tutti i campi.');
+            }
+        }
+
+        // Funzione per caricare i messaggi dal localStorage
+        function loadMessages() {
+            // Otteniamo i messaggi dal localStorage
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+            // Selezioniamo il div dove mostrare i messaggi
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = '';
+
+            // Cicliamo sui messaggi e li aggiungiamo al div
+            messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'message';
+                div.innerHTML = `<strong>${msg.name}</strong>: ${msg.message}`;
+                messagesDiv.appendChild(div);
+            });
+        }
+
+        // Carichiamo i messaggi al caricamento della pagina
+        loadMessages();
+    </script>
 </body>
 </html>
